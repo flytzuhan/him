@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: Him-Server
+im:
+  server:
+    port: 9696

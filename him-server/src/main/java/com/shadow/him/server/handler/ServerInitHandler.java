@@ -1,7 +1,9 @@
 package com.shadow.him.server.handler;
 
-import io.netty.channel.Channel;
+import com.shadow.him.common.coder.ProtocolDecoder;
+import com.shadow.him.common.coder.ProtocolEncoder;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +19,10 @@ public class ServerInitHandler extends ChannelInitializer<SocketChannel> {
     private DispatcherHandler dispatcherHandler;
 
     protected void initChannel(SocketChannel socketChannel) throws Exception {
-        socketChannel.pipeline().addLast(dispatcherHandler);
+        LOGGER.info("添加初始化成功之后的自定义业务逻辑处理器");
+        ChannelPipeline pipeline = socketChannel.pipeline();
+        pipeline.addLast("ProtocolDecoder", new ProtocolDecoder());
+        pipeline.addLast("ProtocolEncoder", new ProtocolEncoder());
+        pipeline.addLast("DispatcherHandler", dispatcherHandler);
     }
-
-    // protected void initChannel(Channel channel) throws Exception {
-    //     LOGGER.info("添加初始化成功之后的自定义业务逻辑处理器");
-    //     channel.pipeline().addLast(dispatcherHandler);
-    // }
 }

@@ -2,6 +2,7 @@ package com.shadow.him.client.bootstrap;
 
 import com.shadow.him.client.handler.ClientInitHandler;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.net.InetSocketAddress;
 
 @Component
 public class ClientStart {
@@ -29,6 +31,13 @@ public class ClientStart {
             bootstrap.group(GROUP)
                     .channel(NioSocketChannel.class)
                     .handler(clientInitHandler);
+
+            LOGGER.info("客户端 OK.");
+            ChannelFuture channelFuture = bootstrap.bind(new InetSocketAddress(9696)).sync();
+            channelFuture.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            LOGGER.error("客户端启动失败");
+            e.printStackTrace();
         } finally {
             GROUP.shutdownGracefully();
         }
